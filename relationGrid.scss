@@ -1,0 +1,65 @@
+// sass ./relationGrid.scss ./relationGrid.css
+
+// setup
+$grid-dividers: (
+small: (6, 4),
+large: (7)
+);
+
+$breakpoints: (
+    small: 0,
+    large: 1280px
+);
+
+$cell-gutters: (
+    small: 20px,
+    large: 20px
+);
+
+// render class names
+.grid-container {
+
+    > [class^='grid-'] {
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+
+        > .cell {
+            width: 100%;
+            box-sizing: border-box;
+        }
+    }
+
+    > .grid-y {
+        flex-direction: column;
+    }
+
+    @each $grid-breakpoint-name, $grid-breakpoint-width in $breakpoints {
+        @media (min-width: #{$grid-breakpoint-width}) {
+            > [class^='grid-'] {
+                &.grid-padding-x {
+                    margin: 0 -#{map_get($cell-gutters, $grid-breakpoint-name)};
+
+                    > .cell {
+                        padding: 0 map_get($cell-gutters, $grid-breakpoint-name);
+                    }
+                }
+            }
+
+            @each $grid-divider in map-get($grid-dividers, $grid-breakpoint-name) {
+                > .grid-#{$grid-breakpoint-name}-#{$grid-divider} {
+
+                    @for $cell-span from 1 to $grid-divider + 1 {
+                        > .cell.#{$grid-breakpoint-name}-#{$cell-span} {
+                            width: 100% / $grid-divider * $cell-span;
+                        }
+
+                        > .#{$grid-breakpoint-name}-offset-#{$cell-span} {
+                            margin-left: 100% / $grid-divider * $cell-span;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
